@@ -1,0 +1,110 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<Domain.Models.User> SignInManager
+@inject UserManager<Domain.Models.User> UserManager
+@{
+    var isAuthenticated = SignInManager.IsSignedIn(User);
+    var isAdmin = User.IsInRole("Admin");
+    var isCustomer = User.IsInRole("Customer");
+    var currentController = ViewContext.RouteData.Values["Controller"]?.ToString();
+    var currentAction = ViewContext.RouteData.Values["Action"]?.ToString();
+}
+
+<div class="top-header-area" id="sticker" style="background-color:#1a1a1a">
+    <div class="container" >
+        <div class="row">
+            <div class="col-lg-12 col-sm-12 text-center">
+                <div class="main-menu-wrap">
+                    <!-- logo -->
+                    <div class="site-logo">
+                        <a asp-area="" asp-controller="Home" asp-action="Index">
+                            <img src="~/assets/img/logo.png" alt="Fruitkha">
+                        </a>
+                    </div>
+                    <!-- logo -->
+                    <!-- menu start -->
+                    <nav class="main-menu " >
+                        <ul>
+                            @if (!isAuthenticated)
+                            {
+                                <li class="current-list-item ">
+                                    <a asp-area="" asp-controller="Account" asp-action="Login">Login</a>
+                                    <a asp-area="" asp-controller="Account" asp-action="Register">Register</a>
+                                </li>
+                            }
+                            else if (isAdmin)
+                            {
+                                <li class="@(currentController == "Product" && currentAction == "Index" ? "active-orange" : "")"><a asp-controller="Product" asp-action="Index"> Products</a></li>
+                                <li class="@(currentController == "Category" && currentAction == "Index" ? "active-orange" : "")">
+                                    <a  asp-controller="Category" asp-action="Index"> Categories</a></li>
+                                <li class="@(currentController == "Admin" && currentAction == "Orders" ? "active-orange" : "")">
+                                    <a  asp-controller="Admin" asp-action="Orders"> Orders</a>
+                                </li>
+                                <li class="@(currentController == "Admin" && currentAction == "Reviews" ? "active-orange" : "")">
+                                    <a  asp-controller="Admin" asp-action="Reviews"> Reviews</a>
+                                </li>
+                                <li class="current-list-item ">
+                                    <form asp-controller="Account" asp-action="Logout" method="post">
+                                        <button type="submit" style=" background-color:#1a1a1a; border:none">
+                                            <i class="fas fa-portrait" style="font-size:28px; color:#fd7e14;"></i>
+                                        </button>
+                                    </form>
+                                </li>
+                            }
+                            else if (isCustomer)
+                            {
+                                <li class="@(currentController == "Customer" && currentAction == "Index" ? "active-orange" : "")">
+                                    <a asp-area="" asp-controller="Customer" asp-action="Index">Home</a>
+                                </li>
+                                <li>
+                                    <a >Pages</a>
+                                    <ul class="sub-menu">
+                                        @* <li><a asp-area="" asp-controller="Home" asp-action="About">About</a></li> *@
+                                        <li><a asp-area="" asp-controller="Cart" asp-action="index">Cart</a></li>
+                                        <li><a asp-area="" asp-controller="Shop" asp-action="Checkout">Check Out</a></li>
+                                        <li><a asp-area="" asp-controller="Customer" asp-action="ALLP">Shop</a></li>
+                                        <li><a asp-area="" asp-controller="Order" asp-action="MyOrders">Orders</a></li>
+                                    </ul>
+                                </li>
+                                
+                                <li>
+                                    <a asp-area="" asp-controller="Customer" asp-action="ALLP">Shop</a>
+                                    <ul class="sub-menu">
+                                        <li><a asp-area="" asp-controller="Customer" asp-action="ALLP">Shop</a></li>
+                                        <li><a asp-area="" asp-controller="Shop" asp-action="Checkout">Check Out</a></li>
+                                        <li><a asp-area="" asp-controller="Cart" asp-action="Index">Cart</a></li>
+                                    </ul>
+                                </li>
+                                <li><a asp-area="" asp-controller="Order" asp-action="MyOrders">Orders</a></li>
+
+                                <li>
+                                    <form asp-controller="Category" asp-action="Search" method="get" class="mb-3">
+                                        <div class="input-group">
+                                            <input type="text" name="keyword" class="form-control" placeholder="Search categories..." />
+                                            <button type="submit" class="btn btn-outline-secondary ">Search</button>
+                                        </div>
+                                    </form>
+                                    <div class="header-icons">
+                                        <a class="shopping-cart" asp-area="" asp-controller="Shop" asp-action="Cart"><i class="fas fa-shopping-cart"></i></a>
+                                        @*  <a class="mobile-hide search-bar-icon" href="#"><i class="fas fa-search"></i></a>*@
+                                        <form asp-controller="Account" asp-action="Logout" method="post">
+                                            <button type="submit" style=" background-color:#1a1a1a; border:none">
+                                                <i class="fas fa-portrait" style="font-size:28px; color:#fd7e14;"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+								</li>
+                            }   
+						</ul>
+                        
+					</nav>
+					
+                    <!-- menu end -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

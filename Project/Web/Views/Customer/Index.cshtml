@@ -1,0 +1,42 @@
+﻿@model List<Category>
+@{
+	ViewData["Title"] = "Customer Home";
+	Layout = "_Layout";
+}
+@{
+    ViewData["Title"] = "Create Category"; ViewData["Description"] = "TechEcommerce";
+}
+
+<div class="container mt-150 mb-150">
+    <div class="row">
+        <div class="col-lg-8 offset-lg-2 text-center">
+            <h2 style="color:Black">Welcome!</h2>
+            <p style="color:Black">You are logged in as a Client.</p>
+            <a asp-controller="Customer" asp-action="AllP" class="cart-btn">All Products</a>
+        </div>
+    </div>
+</div>
+<div class="container mt-150 mb-150">
+    <div class="row">
+        <div class="col-lg-8 offset-lg-2 text-center">
+            <h2 style="color:Black">Welcome to Our Categories</h2>
+        </div>
+    </div>
+</div>
+
+<div class="product-section mt-150 mb-150">
+    <div class="container">
+        <div class="row">
+            @foreach (var category in Model.OrderBy(u => u.Id))
+            {
+                <div class="col-lg-4 col-md-6 text-center">
+                    <div class="single-product-item">
+                        <h3>@category.Name</h3>
+                        <p>@category.Description</p>
+                        <a asp-controller="Category" asp-action="ViewProducts" asp-route-id="@category.Id" class="btn cart-btn">View Products</a>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

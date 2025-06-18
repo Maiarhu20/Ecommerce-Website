@@ -1,0 +1,199 @@
+@model Domain.Models.Product
+
+@{
+    ViewData["Title"] = "Product Details";
+}
+
+
+    @* <input hidden asp-for="Id" /> *@
+
+    <div class="card shadow border-0 mt-4 mb-4">
+        <div class="card-header bg-secondary bg-gradient text-light py-4">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <h3 class="text-white text-uppercase">@Model.Name</h3>
+                    <p class="text-white-50 fw-semibold mb-0">Product Details</p>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="py-3">
+                <div class="row">
+                    <div class="col-6 col-md-2 offset-lg-1 pb-1">
+                        <a asp-action="Index" asp-controller="Customer" class="cart-btn">
+                            <small>Back to Products</small>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12 col-lg-3 offset-lg-1 text-center mb-3">
+                        <img src="@Url.Content(Model.ImageUrl ?? "~/assets/img/products/no-image.png")" style="width:100%; height:200px; object-fit:cover;" />
+                    </div>
+
+                    <div class="col-12 col-lg-6 offset-lg-1">
+                        <div class="col-12 col-md-6 pb-4">
+                            @* <span class="badge bg-warning text-dark">@Model.Category?.Name</span> *@
+                        </div>
+                        <div class="row ps-2">
+                            <h6 class="text-dark text-opacity-50">Product Name: @Model.Name</h6>
+                        </div>
+                        <div class="row ps-2">
+                            @* <h6 class="text-dark text-opacity-50 pb-2">
+                                List Price:
+                                <span class="text-decoration-line-through">
+                                    @Model.ListPrice.ToString("C")
+                                </span>
+                            </h6> *@
+                        </div>
+
+                        <div class="row text-center ps-2">
+                            <div class="p-1 col-3 col-lg-2 bg-white border-bottom">
+                                <div class="text-dark text-opacity-50 fw-semibold">Price</div>
+                            </div>
+                            <div class="p-1 col-3 col-lg-2 bg-white border-bottom">
+                                <div class="text-dark text-opacity-50 fw-semibold">StockQuantity</div>
+                            </div>
+                            @* <div class="p-1 col-3 col-lg-2 bg-white border-bottom">
+                                <div class="text-dark text-opacity-50 fw-semibold">IsFeatured</div>
+                            </div> *@
+                            <div class="p-1 col-3 col-lg-2 bg-white border-bottom">
+                                <div class="text-dark text-opacity-50 fw-semibold">Discount</div>
+                            </div>
+                        </div>
+
+                        <div class="row text-center ps-2">
+                            @* <div class="p-1 col-3 col-lg-2 bg-white text-warning fw-bold">
+                                <div>Price</div>
+                            </div> *@
+                            <div class="p-1 col-3 col-lg-2 bg-white text-warning fw-bold">
+                                @* <div>@Model.Price</div> *@
+                                @if (Model.Discount.HasValue && Model.Discount.Value > 0)
+                                {
+                                    decimal discountedPrice = Model.Price - (Model.Price * Model.Discount.Value);
+                                    <del>@Model.Price.ToString("C")</del>
+                                    <span class="text-success fw-bold ms-2">@discountedPrice.ToString("C")</span>
+                                    <br />
+                                    <span class="badge bg-success">@(Model.Discount.Value * 100)% OFF</span>
+                                }
+                                else
+                                {
+                                    <div class="text-dark text-opacity-50 fw-semibold">No Discount</div>
+                                }
+                            </div>
+                            <div class="p-1 col-3 col-lg-2 bg-white text-warning fw-bold">
+                                <div>@Model.StockQuantity</div>
+                            </div>
+                            @* <div class="p-1 col-3 col-lg-2 bg-white text-warning fw-bold">
+                                <div>@Model.IsFeatured</div>
+                            </div> *@
+                            <div class="p-1 col-3 col-lg-2 bg-white text-warning fw-bold">
+                                @* <div>@Model.Discount</div> *@
+                                @if (Model.Discount.HasValue && Model.Discount.Value > 0)
+                                {
+                                        <div>@Model.Discount</div>
+                                }
+                                else
+                                {
+                                        <div>No discount</div>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="row pl-2 my-3">
+                            <p class="text-secondary lh-sm">@Html.Raw(Model.Description)</p>
+                        </div>
+
+                        <form asp-controller="Cart" asp-action="AddToCart" method="post">
+                            <input type="hidden" name="productId" value="@Model.Id" />
+
+                            <div class="row pl-2 mb-3">
+                                <div class="col-md-4">
+                                    <div class="input-group mb-3">
+                                        <span class="input-group-text bg-primary text-white border-0 fw-semibold"
+                                              id="inputGroup-sizing-default">
+                                            Quantity
+                                        </span>
+                                        <input name="quantity" type="number" value="1" class="form-control text-end"
+                                               aria-label="Quantity" min="1" max="@Model.StockQuantity" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-12 col-md-6 pb-1">
+                                    <button type="submit" class="cart-btn">Add to Cart</button>
+                                </div>
+                            </div>
+                        </form>
+
+                        <!-- Reviews Section -->
+                        <div class="card shadow border-0 mb-5">
+                            <div class="card-header bg-primary text-white">
+                                <h4 class="mb-0">Customer Reviews</h4>
+                            </div>
+                            <div class="card-body">
+                                @if (Model.Reviews != null && Model.Reviews.Any())
+                                {
+                                    foreach (var review in Model.Reviews)
+                                    {
+                                        <div class="mb-3 p-3 border rounded review-box">
+                                            <strong>@review.Customer.User.Name</strong>
+                                            <div>
+                                                <span class="badge bg-warning text-dark">Rating: @review.Rating / 5</span>
+                                            </div>
+                                            <p class="mt-2">@review.Comment</p>
+                                            <small class="text-muted">@review.ReviewDate.ToShortDateString()</small>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <p class="text-muted">No reviews yet.</p>
+                                }
+                            </div>
+                        </div>
+
+                        <!-- Leave a Review -->
+                        <div class="card shadow border-0 mb-5">
+                            <div class="card-header bg-secondary bg-gradient text-white">
+                                <h4 class="mb-0">Leave a Review</h4>
+                            </div>
+                            <div class="card-body">
+                                <p>If you have a comment don't feel hesitant to send us your opinion.</p>
+                                <form asp-controller="Review" asp-action="SubmitReview" method="post">
+                                    <input type="hidden" name="productId" value="@Model.Id" />
+
+                                    <div class="mb-3">
+                                        <label for="rating" class="form-label">Rating (1 to 5)</label>
+                                        <input type="number" name="rating" id="rating" class="form-control" min="1" max="5" required />
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="comment" class="form-label">Comment</label>
+                                        <textarea name="comment" id="comment" class="form-control" cols="30" rows="5" placeholder="Your Message" required></textarea>
+                                    </div>
+
+                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                </form>
+                            </div>
+                        </div>
+
+                        @if (TempData["ErrorMessage"] != null)
+                        {
+                            <div class="alert alert-danger mt-3">
+                                @TempData["ErrorMessage"]
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
