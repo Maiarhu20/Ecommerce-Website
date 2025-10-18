@@ -9,100 +9,210 @@
     var currentAction = ViewContext.RouteData.Values["Action"]?.ToString();
 }
 
-<div class="top-header-area" id="sticker" style="background-color:#1a1a1a">
-    <div class="container" >
-        <div class="row">
-            <div class="col-lg-12 col-sm-12 text-center">
-                <div class="main-menu-wrap">
-                    <!-- logo -->
-                    <div class="site-logo">
-                        <a asp-area="" asp-controller="Home" asp-action="Index">
-                            <img src="~/assets/img/logo.png" alt="Fruitkha">
-                        </a>
-                    </div>
-                    <!-- logo -->
-                    <!-- menu start -->
-                    <nav class="main-menu " >
-                        <ul>
-                            @if (!isAuthenticated)
-                            {
-                                <li class="current-list-item ">
-                                    <a asp-area="" asp-controller="Account" asp-action="Login">Login</a>
-                                    <a asp-area="" asp-controller="Account" asp-action="Register">Register</a>
-                                </li>
-                            }
-                            else if (isAdmin)
-                            {
-                                <li class="@(currentController == "Product" && currentAction == "Index" ? "active-orange" : "")"><a asp-controller="Product" asp-action="Index"> Products</a></li>
-                                <li class="@(currentController == "Category" && currentAction == "Index" ? "active-orange" : "")">
-                                    <a  asp-controller="Category" asp-action="Index"> Categories</a></li>
-                                <li class="@(currentController == "Admin" && currentAction == "Orders" ? "active-orange" : "")">
-                                    <a  asp-controller="Admin" asp-action="Orders"> Orders</a>
-                                </li>
-                                <li class="@(currentController == "Admin" && currentAction == "Reviews" ? "active-orange" : "")">
-                                    <a  asp-controller="Admin" asp-action="Reviews"> Reviews</a>
-                                </li>
-                                <li class="current-list-item ">
-                                    <form asp-controller="Account" asp-action="Logout" method="post">
-                                        <button type="submit" style=" background-color:#1a1a1a; border:none">
-                                            <i class="fas fa-portrait" style="font-size:28px; color:#fd7e14;"></i>
-                                        </button>
-                                    </form>
-                                </li>
-                            }
-                            else if (isCustomer)
-                            {
-                                <li class="@(currentController == "Customer" && currentAction == "Index" ? "active-orange" : "")">
-                                    <a asp-area="" asp-controller="Customer" asp-action="Index">Home</a>
-                                </li>
-                                <li>
-                                    <a >Pages</a>
-                                    <ul class="sub-menu">
-                                        @* <li><a asp-area="" asp-controller="Home" asp-action="About">About</a></li> *@
-                                        <li><a asp-area="" asp-controller="Cart" asp-action="index">Cart</a></li>
-                                        <li><a asp-area="" asp-controller="Shop" asp-action="Checkout">Check Out</a></li>
-                                        <li><a asp-area="" asp-controller="Customer" asp-action="ALLP">Shop</a></li>
-                                        <li><a asp-area="" asp-controller="Order" asp-action="MyOrders">Orders</a></li>
-                                    </ul>
-                                </li>
-                                
-                                <li>
-                                    <a asp-area="" asp-controller="Customer" asp-action="ALLP">Shop</a>
-                                    <ul class="sub-menu">
-                                        <li><a asp-area="" asp-controller="Customer" asp-action="ALLP">Shop</a></li>
-                                        <li><a asp-area="" asp-controller="Shop" asp-action="Checkout">Check Out</a></li>
-                                        <li><a asp-area="" asp-controller="Cart" asp-action="Index">Cart</a></li>
-                                    </ul>
-                                </li>
-                                <li><a asp-area="" asp-controller="Order" asp-action="MyOrders">Orders</a></li>
+<style>
+    /* remove any gap at the very top */
+    html, body {
+        margin: 0;
+        padding: 0;
+    }
 
-                                <li>
-                                    <form asp-controller="Category" asp-action="Search" method="get" class="mb-3">
-                                        <div class="input-group">
-                                            <input type="text" name="keyword" class="form-control" placeholder="Search categories..." />
-                                            <button type="submit" class="btn btn-outline-secondary ">Search</button>
-                                        </div>
-                                    </form>
-                                    <div class="header-icons">
-                                        <a class="shopping-cart" asp-area="" asp-controller="Shop" asp-action="Cart"><i class="fas fa-shopping-cart"></i></a>
-                                        @*  <a class="mobile-hide search-bar-icon" href="#"><i class="fas fa-search"></i></a>*@
-                                        <form asp-controller="Account" asp-action="Logout" method="post">
-                                            <button type="submit" style=" background-color:#1a1a1a; border:none">
-                                                <i class="fas fa-portrait" style="font-size:28px; color:#fd7e14;"></i>
-                                            </button>
-                                        </form>
-                                    </div>
-								</li>
-                            }   
-						</ul>
-                        
-					</nav>
-					
-                    <!-- menu end -->
+    /* active‐page: text becomes orange, no orange background */
+    .navbar-nav .active-orange > .nav-link,
+    .dropdown-menu .active-orange > .dropdown-item {
+        color: #fd7e14 !important;
+        background-color: transparent !important;
+    }
+
+    /* hover: any link turns orange text */
+    .navbar-nav .nav-link:hover,
+    .dropdown-menu .dropdown-item:hover {
+        color: #fd7e14 !important;
+        background-color: transparent !important;
+    }
+
+    /* special round gradient logout button */
+    .btn-logout {
+        width: 40px;
+        height: 40px;
+        padding: 0;
+        border: none;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #fd7e14, #fd7e14);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        transition: transform .15s ease;
+        color: #fff;
+    }
+
+        .btn-logout:hover {
+            transform: scale(1.1);
+        }
+
+    /* make any .btn with active-orange have orange background + white text */
+    /* .btn.active-orange {
+        background-color: #fd7e14 !important;
+        border-color: #fd7e14 !important;
+        color: #fff !important;
+    } */
+
+      /*   .btn.active-orange i {
+            color: #fff !important;
+        } */
+
+    /* push page content down so it isn't hidden under the fixed navbar */
+    main, .content-wrapper {
+        padding-top: 70px;
+    }
+</style>
+
+<div class="top-header-area" id="sticker">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container-fluid">
+            <!-- logo -->
+            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                <img src="~/assets/img/logo.png" alt="Fruitkha" style="height:40px;">
+            </a>
+
+            <!-- mobile toggler -->
+            <button class="navbar-toggler" type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#mainMenu"
+                    aria-controls="mainMenu"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="mainMenu">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+                    @* Not signed in *@
+                    @if (!isAuthenticated)
+                    {
+                        <li class="nav-item @(currentController == "Account" && currentAction == "Login" ? "active-orange" : "")">
+                            <a class="nav-link" asp-controller="Account" asp-action="Login">Login</a>
+                        </li>
+                        <li class="nav-item @(currentController == "Account" && currentAction == "Register" ? "active-orange" : "")">
+                            <a class="nav-link" asp-controller="Account" asp-action="Register">Register</a>
+                        </li>
+                    }
+
+                    @* Admin menu *@
+                    else if (isAdmin)
+                    {
+                        <li class="nav-item @(currentController == "Product" && currentAction == "Index" ? "active-orange" : "")">
+                            <a class="nav-link" asp-controller="Product" asp-action="Index">Products</a>
+                        </li>
+                        <li class="nav-item @(currentController == "Category" && currentAction == "Index" ? "active-orange" : "")">
+                            <a class="nav-link" asp-controller="Category" asp-action="Index">Categories</a>
+                        </li>
+                        <li class="nav-item @(currentController == "Admin" && currentAction == "Orders" ? "active-orange" : "")">
+                            <a class="nav-link" asp-controller="Admin" asp-action="Orders">Orders</a>
+                        </li>
+                        <li class="nav-item @(currentController == "Admin" && currentAction == "Reviews" ? "active-orange" : "")">
+                            <a class="nav-link" asp-controller="Admin" asp-action="Reviews">Reviews</a>
+                        </li>
+                    }
+
+                    @* Customer menu *@
+                    else if (isCustomer)
+                    {
+                        <li class="nav-item @(currentController == "Customer" && currentAction == "Index" ? "active-orange" : "")">
+                            <a class="nav-link" asp-area="" asp-controller="Customer" asp-action="Index">Home</a>
+                        </li>
+
+                        @* <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle"
+                               href="#"
+                               id="pagesDropdown"
+                               role="button"
+                               data-bs-toggle="dropdown"
+                               aria-expanded="false">
+                                Pages
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="pagesDropdown">
+                                <li><a asp-area="" asp-controller="Home" asp-action="About">About</a></li>
+                                <li class="@(currentController == "Cart" && currentAction == "Index" ? "active-orange" : "")">
+                                    <a class="dropdown-item" asp-area="" asp-controller="Cart" asp-action="Index">Cart</a>
+                                </li>
+                                <li><a asp-area="" asp-controller="Shop" asp-action="Checkout">Check Out</a></li>
+                                <li class="@(currentController == "Customer" && currentAction == "ALLP" ? "active-orange" : "")">
+                                    <a class="dropdown-item" asp-area="" asp-controller="Customer" asp-action="ALLP">Shop</a>
+                                </li>
+                                <li class="@(currentController == "Order" && currentAction == "MyOrders" ? "active-orange" : "")">
+                                    <a class="dropdown-item" asp-area="" asp-controller="Order" asp-action="MyOrders">Orders</a>
+                                </li>
+                            </ul>
+                        </li> *@
+
+                        @* <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle"
+                               href="#"
+                               id="shopDropdown"
+                               role="button"
+                               data-bs-toggle="dropdown"
+                               aria-expanded="false">
+                                Shop
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="shopDropdown">
+                                <li class="@(currentController == "Customer" && currentAction == "ALLP" ? "active-orange" : "")">
+                                    <a class="dropdown-item" asp-area="" asp-controller="Customer" asp-action="ALLP">Shop</a>
+                                </li>
+                                <li><a asp-area="" asp-controller="Shop" asp-action="Checkout">Check Out</a></li>
+                                <li class="@(currentController == "Cart" && currentAction == "Index" ? "active-orange" : "")">
+                                    <a class="dropdown-item" asp-area="" asp-controller="Cart" asp-action="Index">Cart</a>
+                                </li>
+                            </ul>
+                        </li> *@
+
+                        <li class="nav-item @(currentController == "Order" && currentAction == "MyOrders" ? "active-orange" : "")">
+                            <a class="nav-link" asp-area="" asp-controller="Order" asp-action="MyOrders">Orders</a>
+                        </li>
+                    }
+                </ul>
+
+                <div class="d-flex align-items-center">
+                    @* Customer search + cart *@
+                    @if (isCustomer)
+                    {
+                        <form class="d-flex me-3 mb-0"
+                              asp-controller="Category"
+                              asp-action="Search"
+                              method="get">
+                            <input class="form-control form-control-sm me-2"
+                                   type="search"
+                                   name="keyword"
+                                   placeholder="Search categories..."
+                                   aria-label="Search">
+                            <button class="btn btn-outline-warning btn-sm @(currentController == "Category" && currentAction == "Search" ? "active-orange" : "")"
+                                    type="submit">
+                                Go
+                            </button>
+                        </form>
+
+                        <a class="btn btn-outline-warning btn-sm me-3 position-relative @(currentController == "Cart" && currentAction == "Index" ? "active-orange" : "")"
+                           asp-area="" asp-controller="Cart" asp-action="Index"
+                           title="Cart">
+                            <i class="fas fa-shopping-cart"></i>
+                            @* <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">3</span> *@
+                        </a>
+                    }
+
+                    @* logout for any signed-in user *@
+                    @if (isAuthenticated)
+                    {
+                        <form asp-controller="Account" asp-action="Logout" method="post" class="mb-0">
+                            <button type="submit" class="btn-logout" title="Logout">
+                                <i class="fas fa-sign-out-alt"></i>
+                            </button>
+                        </form>
+                    }
                 </div>
             </div>
         </div>
-    </div>
+    </nav>
 </div>
 
 @section Scripts {
